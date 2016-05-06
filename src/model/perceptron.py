@@ -33,6 +33,7 @@ class Perceptron(Classifier):
     validationSet : list
     testSet : list
     weight : list
+    bias : float
     """
     def __init__(self, train, valid, test, learningRate=0.01, epochs=50):
 
@@ -46,6 +47,7 @@ class Perceptron(Classifier):
         # Initialize the weight vector with small random values
         # around 0 and 0.1
         self.weight = np.random.rand(self.trainingSet.input.shape[1])/10
+        self.bias = -100.
 
     def train(self, verbose=True):
         """Train the perceptron with the perceptron learning algorithm.
@@ -78,7 +80,7 @@ class Perceptron(Classifier):
             True if the testInstance is recognized as a 7, False otherwise.
         """
         # Hard limiter.
-        return self.fire(testInstance) > 0
+        return self.fire(testInstance)
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
@@ -105,4 +107,4 @@ class Perceptron(Classifier):
     def fire(self, input):
         """Fire the output of the perceptron corresponding to the input """
         # I already implemented it for you to see how you can work with numpy
-        return Activation.sign(np.dot(np.array(input), self.weight))
+        return Activation.sign(np.dot(np.array(input), self.weight) + self.bias)
