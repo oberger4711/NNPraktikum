@@ -18,19 +18,22 @@ def main():
                                           data.validationSet,
                                           data.testSet,
                                           learningRate=0.005,
-                                          epochs=30)
+                                          epochs=50)
 
     # Train the classifiers
     print("=========================")
     print("Training..")
+    print("")
 
-    print("\nStupid Classifier has been training..")
+    print("Train Stupid Classifier..")
     myStupidClassifier.train()
     print("Done..")
+    print("")
 
-    print("\nPerceptron has been training..")
-    myPerceptronClassifier.train()
+    print("Train Perceptron..")
+    myPerceptronClassifier.train(False)
     print("Done..")
+    print("")
 
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
@@ -40,13 +43,16 @@ def main():
 
     # Report the result
     print("=========================")
+    print("Results..")
+    print("")
     evaluator = Evaluator()
 
     print("Result of the stupid recognizer:")
     # evaluator.printComparison(data.testSet, stupidPred)
     evaluator.printAccuracy(data.testSet, stupidPred)
+    print("")
 
-    print("\nResult of the Perceptron recognizer:")
+    print("Result of the Perceptron recognizer:")
     # evaluator.printComparison(data.testSet, perceptronPred)
     # Uncomment this to make your Perceptron evaluated
     evaluator.printAccuracy(data.testSet, perceptronPred)
