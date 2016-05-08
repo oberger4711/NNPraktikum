@@ -31,6 +31,7 @@ def main():
     print("")
 
     print("Train Perceptron..")
+    # Change parameter to True for verbose output.
     myPerceptronClassifier.train(False)
     print("Done..")
     print("")
