@@ -72,7 +72,7 @@ class Perceptron(Classifier):
     def validateAccuracy(self):
         correctClassifications = 0
         for label, data in zip(self.validationSet.label, self.validationSet.input):
-            if self.classify(data) == label:
+            if self.fire(data) == label:
                 correctClassifications += 1
         return float(correctClassifications) / len(self.validationSet.input)
 
