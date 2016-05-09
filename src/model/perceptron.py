@@ -61,13 +61,13 @@ class Perceptron(Classifier):
 	# Here you have to implement the Perceptron Learning Algorithm
         # to change the weights of the Perceptron
         for i in range(0, self.epochs):
-            label, data = self.trainingSet.label[i], self.trainingSet.input[i]
-            error = label - self.classify(data)
-            weightStep = self.learningRate * error
-            self.weight[1:] += weightStep * np.array(data)
-            self.weight[0] += weightStep
-            if verbose:
-                logging.info("New validation accuracy after adjusting weights: %f", self.validateAccuracy())
+            for label, data in zip(self.trainingSet.label, self.trainingSet.input):
+                error = label - self.classify(data)
+                weightStep = self.learningRate * error
+                self.weight[1:] += weightStep * np.array(data)
+                self.weight[0] += weightStep
+                if verbose:
+                    logging.info("New validation accuracy after adjusting weights: %f", self.validateAccuracy())
     
     def validateAccuracy(self):
         correctClassifications = 0
