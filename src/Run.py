@@ -31,7 +31,7 @@ def main():
     print("")
 
     print("Train Perceptron..")
-    myPerceptronClassifier.train(False)
+    myPerceptronClassifier.train(True)
     print("Done..")
     print("")
 

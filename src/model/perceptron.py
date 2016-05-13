@@ -4,6 +4,7 @@ import sys
 import logging
 
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
@@ -60,21 +61,15 @@ class Perceptron(Classifier):
         """
 	# Here you have to implement the Perceptron Learning Algorithm
         # to change the weights of the Perceptron
-        for i in range(0, self.epochs):
+        for epoch in range(0, self.epochs):
             for label, data in zip(self.trainingSet.label, self.trainingSet.input):
                 error = label - self.classify(data)
                 weightStep = self.learningRate * error
                 self.weight[1:] += weightStep * np.array(data)
                 self.weight[0] += weightStep
-                if verbose:
-                    logging.info("New validation accuracy after adjusting weights: %f", self.validateAccuracy())
-    
-    def validateAccuracy(self):
-        correctClassifications = 0
-        for label, data in zip(self.validationSet.label, self.validationSet.input):
-            if self.fire(data) == label:
-                correctClassifications += 1
-        return float(correctClassifications) / len(self.validationSet.input)
+            if verbose:
+                accuracy = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet))
+                logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
     def classify(self, testInstance):
         """Classify a single instance.
