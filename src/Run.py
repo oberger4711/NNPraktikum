@@ -4,7 +4,7 @@
 from data.mnist_seven import MNISTSeven
 from model.stupid_recognizer import StupidRecognizer
 from model.perceptron import Perceptron
-#from model.logistic_regression import LogisticRegression
+from model.logistic_regression import LogisticRegression
 from report.evaluator import Evaluator
 
 
@@ -19,11 +19,11 @@ def main():
                                         learningRate=0.005,
                                         epochs=10)
     # Uncomment this to run Logistic Neuron Layer
-#     myLRClassifier = LogisticRegression(data.trainingSet,
-#                                         data.validationSet,
-#                                         data.testSet,
-#                                         learningRate=0.005,
-#                                         epochs=30)
+    myLRClassifier = LogisticRegression(data.trainingSet,
+                                        data.validationSet,
+                                        data.testSet,
+                                        learningRate=0.005,
+                                        epochs=30)
 
     # Train the classifiers
     print("=========================")
@@ -41,16 +41,16 @@ def main():
     print("Done..")
     print("")
 
-#     print("Train Logistic Regression..")
-#     myLRClassifier.train()
-#     print("Done..")
-#     print("")
+    print("Train Logistic Regression..")
+    myLRClassifier.train()
+    print("Done..")
+    print("")
 
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
     stupidPred = myStupidClassifier.evaluate()
     perceptronPred = myPerceptronClassifier.evaluate()
-#     lrPred = myLRClassifier.evaluate()
+    lrPred = myLRClassifier.evaluate()
 
     # Report the result
     print("=========================")
@@ -68,9 +68,10 @@ def main():
     evaluator.printAccuracy(data.testSet, perceptronPred)
     print("")
 
-#     print("Result of the Logistic Regression recognizer:")
-#     # evaluator.printComparison(data.testSet, perceptronPred)
-#     evaluator.printAccuracy(data.testSet, lrPred)
+    print("Result of the Logistic Regression recognizer:")
+    # evaluator.printComparison(data.testSet, perceptronPred)
+    #evaluator.printAccuracy(data.testSet, lrPred)
+    print("")
 
 
 if __name__ == '__main__':
