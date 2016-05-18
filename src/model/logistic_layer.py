@@ -34,10 +34,12 @@ class LogisticLayer():
         number of units in the current layer
     shape : tuple
         shape of the layer, is also shape of the weight matrix
+    learning_rate : float
+        Learning rate to use in weight updates
     """
 
     def __init__(self, n_in, n_out, weights=None,
-                 activation='sigmoid', is_classifier_layer=False):
+                 activation='sigmoid', is_classifier_layer=False, learning_rate=0.1):
 
         # Get activation function from string
         self.activation_string = activation
@@ -98,7 +100,7 @@ class LogisticLayer():
         """
 
         # Here the implementation of partial derivative calculation
-        pass
+        self.deltas = self.outp * (1 - self.outp) * np.sum(nextDerivatives * nextWeights)
 
     def updateWeights(self):
         """
@@ -106,7 +108,7 @@ class LogisticLayer():
         """
 
         # Here the implementation of weight updating mechanism
-        pass
+        self.weights += self.learning_rate * self.deltas * self.inp
 
     def _fire(self, inp):
         # TODO: Use bias as in perceptron.
