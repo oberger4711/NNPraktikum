@@ -113,3 +113,6 @@ class LogisticLayer():
     def _fire(self, inp):
         # TODO: Use bias as in perceptron.
         return Activation.sigmoid(np.dot(np.array(inp), self.weight))
+
+    def getOutput():
+        return self.outp

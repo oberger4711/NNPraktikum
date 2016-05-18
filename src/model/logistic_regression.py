@@ -33,6 +33,7 @@ class LogisticRegression(Classifier):
     weight : list
     learningRate : float
     epochs : positive int
+    layer : LogisticLayer
     """
 
     def __init__(self, train, valid, test, learningRate=0.01, epochs=50):
@@ -43,6 +44,7 @@ class LogisticRegression(Classifier):
         self.trainingSet = train
         self.validationSet = valid
         self.testSet = test
+        self.layer = LogisticLayer(self.trainingSet.input[0].shape, 1)
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -55,7 +57,11 @@ class LogisticRegression(Classifier):
 
         # Here you have to implement training method "epochs" times
         # Please using LogisticLayer class
-        pass
+        for epoch in xrange(self.epochs):
+            for label, data in zip(self.trainingSet.label, self.trainingSet.input):
+                self.layer.forward(self.trainingSet.input)
+                # TODO: This should not be here but in the logistic_layer.
+                #delta_out = (
 
     def classify(self, testInstance):
         """Classify a single instance.
