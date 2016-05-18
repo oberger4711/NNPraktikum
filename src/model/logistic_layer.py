@@ -78,8 +78,7 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
-        # Here you have to implement the forward pass
-        pass
+        self.outp = np.full(n_out, self._fire(inp))
 
     def computeDerivative(self, nextDerivatives, nextWeights):
         """
@@ -110,4 +109,5 @@ class LogisticLayer():
         pass
 
     def _fire(self, inp):
+        # TODO: Use bias as in perceptron.
         return Activation.sigmoid(np.dot(np.array(inp), self.weight))
