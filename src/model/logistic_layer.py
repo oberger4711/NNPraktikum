@@ -80,7 +80,7 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
-        self.outp = np.full(n_out, self._fire(inp))
+        self.outp = self._fire(inp)
 
     def computeDerivative(self, nextDerivatives, nextWeights):
         """
