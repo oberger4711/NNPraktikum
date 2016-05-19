@@ -7,6 +7,7 @@ import numpy as np
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
+from model.logistic_layer import LogisticLayer
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
                     level=logging.DEBUG,
@@ -44,7 +45,7 @@ class LogisticRegression(Classifier):
         self.trainingSet = train
         self.validationSet = valid
         self.testSet = test
-        self.layer = LogisticLayer(self.trainingSet.input[0].shape, 1)
+        self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1)
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -59,9 +60,8 @@ class LogisticRegression(Classifier):
         # Please using LogisticLayer class
         for epoch in xrange(self.epochs):
             for label, data in zip(self.trainingSet.label, self.trainingSet.input):
-                self.layer.forward(self.trainingSet.input)
-                # TODO: This should not be here but in the logistic_layer.
-                #delta_out = (
+                self.layer.forward(data)
+                # TODO: Backprop
 
     def classify(self, testInstance):
         """Classify a single instance.
