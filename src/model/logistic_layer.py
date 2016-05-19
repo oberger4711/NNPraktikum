@@ -55,7 +55,7 @@ class LogisticLayer():
 
         # You can have better initialization here
         if weights is None:
-            self.weight = np.random.rand(n_in, n_out)/10
+            self.weights = np.random.rand(n_in, n_out)/10
         else:
             self.weights = weights
 
@@ -112,7 +112,7 @@ class LogisticLayer():
 
     def _fire(self, inp):
         # TODO: Use bias as in perceptron.
-        return Activation.sigmoid(np.dot(np.array(inp), self.weight))
+        return Activation.sigmoid(np.dot(np.array(inp), self.weights))
 
     def getOutput():
         return self.outp
