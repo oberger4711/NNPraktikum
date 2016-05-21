@@ -48,16 +48,18 @@ class LogisticLayer():
         self.n_in = n_in
         self.n_out = n_out
 
-        self.inp = np.ndarray((n_in+1, 1))
+        self.inp = np.ndarray((n_in + 1))
         self.inp[0] = 1
         self.outp = np.ndarray((n_out, 1))
         self.deltas = np.zeros((n_out, 1))
 
         # You can have better initialization here
         if weights is None:
-            self.weights = np.random.rand(n_in, n_out)/10
+            self.weights = np.random.rand(n_in + 1, n_out)/10
         else:
+            assert weights.shape == (n_in + 1, n_out)
             self.weights = weights
+        self.threshold = np.random.rand() / 10
 
         self.learning_rate = learning_rate
 
@@ -74,7 +76,7 @@ class LogisticLayer():
         Parameters
         ----------
         inp : ndarray
-            a numpy array (1,n_in + 1) containing the input of the layer
+            a numpy array (1,n_in) containing the input of the layer
 
         Change outp
         -------
@@ -82,6 +84,9 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
+        self.inp = np.ndarray((self.n_in + 1, 1))
+        self.inp[0] = 1
+        self.inp[1:,0] = inp
         self.outp = self._fire(inp)
 
     def computeDerivative(self, nextDerivatives, nextWeights):
@@ -131,7 +136,7 @@ class LogisticLayer():
 
     def _fire(self, inp):
         # TODO: Use bias as in perceptron.
-        return Activation.sigmoid(np.dot(np.array(inp), self.weights))
+        return Activation.sigmoid(np.dot(self.inp[:,0], self.weights))
 
     def getOutput(self):
         return self.outp

@@ -45,7 +45,7 @@ class LogisticRegression(Classifier):
         self.trainingSet = train
         self.validationSet = valid
         self.testSet = test
-        self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1)
+        self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1, learning_rate=learningRate)
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -81,7 +81,7 @@ class LogisticRegression(Classifier):
         # Here you have to implement classification method given an instance
         self.layer.forward(testInstance)
 
-        return self.layer.getOutput() > 0
+        return self.layer.getOutput() > 0.5
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.

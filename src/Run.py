@@ -37,7 +37,7 @@ def main():
 
     print("Train Perceptron..")
     # Change parameter to True for verbose output.
-    myPerceptronClassifier.train(True)
+    #myPerceptronClassifier.train(True)
     print("Done..")
     print("")
 
@@ -49,7 +49,7 @@ def main():
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
     stupidPred = myStupidClassifier.evaluate()
-    perceptronPred = myPerceptronClassifier.evaluate()
+    #perceptronPred = myPerceptronClassifier.evaluate()
     lrPred = myLRClassifier.evaluate()
 
     # Report the result
@@ -65,12 +65,12 @@ def main():
 
     print("Result of the Perceptron recognizer:")
     # evaluator.printComparison(data.testSet, perceptronPred)
-    evaluator.printAccuracy(data.testSet, perceptronPred)
+    #evaluator.printAccuracy(data.testSet, perceptronPred)
     print("")
 
     print("Result of the Logistic Regression recognizer:")
     # evaluator.printComparison(data.testSet, perceptronPred)
-    #evaluator.printAccuracy(data.testSet, lrPred)
+    evaluator.printAccuracy(data.testSet, lrPred)
     print("")
 
 
