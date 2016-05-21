@@ -4,6 +4,7 @@ import sys
 import logging
 
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
@@ -58,11 +59,14 @@ class LogisticRegression(Classifier):
 
         # Here you have to implement training method "epochs" times
         # Please using LogisticLayer class
-        for epoch in xrange(self.epochs):
+        for epoch in range(0, self.epochs):
             for label, data in zip(self.trainingSet.label, self.trainingSet.input):
                 self.classify(data)
                 self.layer.computeOutDerivative(label)
                 self.layer.updateWeights()
+            if verbose:
+                accuracy = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet))
+                logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
     def classify(self, testInstance):
         """Classify a single instance.
