@@ -59,6 +59,8 @@ class LogisticLayer():
         else:
             self.weights = weights
 
+        self.learning_rate = learning_rate
+
         self.is_classifier_layer = is_classifier_layer
 
         # Some handy properties of the layers
@@ -102,6 +104,23 @@ class LogisticLayer():
         # Here the implementation of partial derivative calculation
         self.deltas = self.outp * (1 - self.outp) * np.sum(nextDerivatives * nextWeights)
 
+    def computeOutDerivative(self, expected):
+        """
+        Compute the derivatives if this is an output layer
+
+        Parameters
+        ----------
+        expected: ndarray
+            a numpy array containing the expected result for the given input
+
+        Change deltas
+        -------
+        deltas: ndarray
+            a numpy array containing the partial derivatives on this layer
+        """
+
+        self.deltas = (expected - self.outp) * self.outp * (1 - self.outp)
+
     def updateWeights(self):
         """
         Update the weights of the layer
@@ -114,5 +133,5 @@ class LogisticLayer():
         # TODO: Use bias as in perceptron.
         return Activation.sigmoid(np.dot(np.array(inp), self.weights))
 
-    def getOutput():
+    def getOutput(self):
         return self.outp

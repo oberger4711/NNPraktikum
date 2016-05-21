@@ -60,8 +60,10 @@ class LogisticRegression(Classifier):
         # Please using LogisticLayer class
         for epoch in xrange(self.epochs):
             for label, data in zip(self.trainingSet.label, self.trainingSet.input):
-                self.layer.forward(data)
-                # TODO: Backprop
+                self.classify(data)
+                # Calculate error.
+                self.layer.computeOutDerivative(label)
+                self.layer.updateWeights()
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -77,7 +79,9 @@ class LogisticRegression(Classifier):
         """
 
         # Here you have to implement classification method given an instance
-        pass
+        self.layer.forward(testInstance)
+
+        return self.layer.getOutput() > 0
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
