@@ -135,7 +135,6 @@ class LogisticLayer():
         self.weights += self.learning_rate * self.deltas * self.inp
 
     def _fire(self, inp):
-        # TODO: Use bias as in perceptron.
         return Activation.sigmoid(np.dot(self.inp[:,0], self.weights))
 
     def getOutput(self):

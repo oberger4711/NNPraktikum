@@ -61,7 +61,6 @@ class LogisticRegression(Classifier):
         for epoch in xrange(self.epochs):
             for label, data in zip(self.trainingSet.label, self.trainingSet.input):
                 self.classify(data)
-                # Calculate error.
                 self.layer.computeOutDerivative(label)
                 self.layer.updateWeights()
 
