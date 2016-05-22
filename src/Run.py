@@ -42,7 +42,7 @@ def main():
     print("")
 
     print("Train Logistic Regression..")
-    myLRClassifier.train()
+    myLRClassifier.train(graph=True)
     print("Done..")
     print("")
 

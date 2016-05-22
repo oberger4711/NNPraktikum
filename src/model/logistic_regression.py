@@ -4,6 +4,7 @@ import sys
 import logging
 
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 
 from util.activation_functions import Activation
@@ -48,7 +49,7 @@ class LogisticRegression(Classifier):
         self.testSet = test
         self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1, learning_rate=learningRate)
 
-    def train(self, verbose=True):
+    def train(self, verbose=True, graph=False):
         """Train the Logistic Regression.
 
         Parameters
@@ -56,6 +57,10 @@ class LogisticRegression(Classifier):
         verbose : boolean
             Print logging messages with validation accuracy if verbose is True.
         """
+
+        # Data for graph
+        x = []
+        y = []
 
         # Here you have to implement training method "epochs" times
         # Please using LogisticLayer class
@@ -67,6 +72,20 @@ class LogisticRegression(Classifier):
             if verbose:
                 accuracy = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet))
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
+                if graph:
+                    y.append(accuracy)
+            if graph:
+                if len(y) == len(x):
+                    # Do not evaluate twice
+                    accuracy = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet))
+                    y.append(accuracy)
+                x.append(epoch)
+        if graph:
+            plt.plot(x, y)
+            plt.xlabel('epoch')
+            plt.ylabel('accuracy')
+            plt.title('Accuracy of different epochs')
+            plt.show()
 
     def classify(self, testInstance):
         """Classify a single instance.
