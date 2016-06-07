@@ -107,7 +107,7 @@ class MultilayerPerceptron(Classifier):
         """
         pass
 
-    def train(self, verbose=True):
+    def train(self, verbose=False, graph=False):
         """Train the Multi-layer Perceptrons
 
         Parameters
