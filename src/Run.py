@@ -9,9 +9,14 @@ from report.evaluator import Evaluator
 
 
 def main():
-    runStupidClassifier()
-    runPerceptronClassifier()
-    runLogisticClassifier()
+    one_digit_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
+    runStupidClassifier(one_digit_data)
+    runPerceptronClassifier(one_digit_data)
+    runLogisticClassifier(one_digit_data)
+    one_digit_data = None
+
+    #all_digits_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000, one_hot=False)
+    #runMultilayerClassifier(all_digits_data)
 
 def trainAndEvaluateClassifier(classifier, test_set, verbose=False, graph=False):
     # Train
@@ -34,30 +39,35 @@ def trainAndEvaluateClassifier(classifier, test_set, verbose=False, graph=False)
     print("")
 
 
-def runStupidClassifier():
-    data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
-    stupidClassifier = StupidRecognizer(data.training_set,
-                                          data.validation_set,
-                                          data.test_set)
-    trainAndEvaluateClassifier(stupidClassifier, data.test_set)
+def runStupidClassifier(data):
+    c = StupidRecognizer(data.training_set,
+                            data.validation_set,
+                            data.test_set)
+    trainAndEvaluateClassifier(c, data.test_set)
 
-def runPerceptronClassifier():
-    data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
-    perceptronClassifier = Perceptron(data.training_set,
-                                        data.validation_set,
-                                        data.test_set,
-                                        learningRate=0.005,
-                                        epochs=10)
-    trainAndEvaluateClassifier(perceptronClassifier, data.test_set)
+def runPerceptronClassifier(data):
+    c = Perceptron(data.training_set,
+                            data.validation_set,
+                            data.test_set,
+                            learningRate=0.005,
+                            epochs=10)
+    trainAndEvaluateClassifier(c, data.test_set)
 
-def runLogisticClassifier():
-    data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
-    logisticClassifier = LogisticRegression(data.training_set,
-                                        data.validation_set,
-                                        data.test_set,
-                                        learningRate=0.005,
-                                        epochs=30)
-    trainAndEvaluateClassifier(logisticClassifier, data.test_set)
+def runLogisticClassifier(data):
+    c = LogisticRegression(data.training_set,
+                            data.validation_set,
+                            data.test_set,
+                            learningRate=0.005,
+                            epochs=30)
+    trainAndEvaluateClassifier(c, data.test_set)
+
+def runMultilayerClassifier(data):
+    c = MultilayerPerceptron(data.training_set,
+                            data.validation_set,
+                            data.test_set,
+                            learning_rate=0.005,
+                            epochs=30)
+    trainAndEvaluateClassifier(c, data.test_set)
 
 if __name__ == '__main__':
     main()
