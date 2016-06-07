@@ -49,7 +49,7 @@ class LogisticRegression(Classifier):
         self.testSet = test
         self.layer = LogisticLayer(self.trainingSet.input.shape[1], 1, learning_rate=learningRate)
 
-    def train(self, verbose=True, graph=False):
+    def train(self, verbose=False, graph=False):
         """Train the Logistic Regression.
 
         Parameters
