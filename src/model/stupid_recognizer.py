@@ -27,7 +27,9 @@ class StupidRecognizer(Classifier):
         self.validation_set = valid
         self.test_set = test
 
-    def train(self):
+    def train(self, verbose=False, graph=False):
+        if graph:
+            logging.warn("Stupid classifier does not support graph drawing.")
         # Do nothing
         pass
 

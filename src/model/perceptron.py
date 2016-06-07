@@ -51,7 +51,7 @@ class Perceptron(Classifier):
         # around 0 and 0.1
         self.weight = np.random.rand(self.trainingSet.input.shape[1] + 1)/10
 
-    def train(self, verbose=True):
+    def train(self, verbose=False, graph=False):
         """Train the perceptron with the perceptron learning algorithm.
 
         Parameters
@@ -70,6 +70,8 @@ class Perceptron(Classifier):
             if verbose:
                 accuracy = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet))
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
+        if graph:
+            logging.warn("Perceptron does not support graph drawing.")
 
     def classify(self, testInstance):
         """Classify a single instance.
