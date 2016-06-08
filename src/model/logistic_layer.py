@@ -44,6 +44,8 @@ class LogisticLayer():
         # Get activation function from string
         self.activation_string = activation
         self.activation = Activation.get_activation(self.activation_string)
+        self.activation_derivative = Activation.get_derivative(self.activation_string)
+        assert self.activation_derivative != None
 
         self.n_in = n_in
         self.n_out = n_out
@@ -89,7 +91,7 @@ class LogisticLayer():
         self.inp[1:,0] = inp
         self.outp = self._fire(inp)
 
-    def computeDerivative(self, nextDerivatives, nextWeights):
+    def computeDerivative(self, next_derivatives, next_weights):
         """
         Compute the derivatives (backward)
 
@@ -107,9 +109,12 @@ class LogisticLayer():
         """
 
         # Here the implementation of partial derivative calculation
-        self.deltas = self.outp * (1 - self.outp) * np.sum(nextDerivatives * nextWeights)
+        # TODO: Delete if new solution works.
+        #self.deltas = self.outp * (1 - self.outp) * np.sum(next_derivatives * next_weights)
+        # More general solution:
+        self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights)
 
-    def computeOutDerivative(self, expected):
+    def computeOutDerivative(self, expected_outp):
         """
         Compute the derivatives if this is an output layer
 
@@ -124,7 +129,10 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        self.deltas = (expected - self.outp) * self.outp * (1 - self.outp)
+        # TODO: Delete if new solution works.
+        #self.deltas = (expected_outp - self.outp) * self.outp * (1 - self.outp)
+        # More general solution:
+        self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
 
     def updateWeights(self):
         """

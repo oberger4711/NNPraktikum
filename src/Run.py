@@ -10,8 +10,8 @@ from report.evaluator import Evaluator
 
 def main():
     one_digit_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
-    runStupidClassifier(one_digit_data)
-    runPerceptronClassifier(one_digit_data)
+    #runStupidClassifier(one_digit_data)
+    #runPerceptronClassifier(one_digit_data)
     runLogisticClassifier(one_digit_data)
     one_digit_data = None
 
