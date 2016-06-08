@@ -128,9 +128,7 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
-
-        return self.deltas, self.weights
+        return self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
 
     def updateWeights(self):
         """

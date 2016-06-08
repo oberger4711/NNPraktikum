@@ -3,6 +3,8 @@ import sys
 import logging
 import numpy as np
 
+from sklearn.metrics import accuracy_score
+
 # from util.activation_functions import Activation
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
@@ -62,8 +64,7 @@ class MultilayerPerceptron(Classifier):
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
         output_activation = "sigmoid"
-        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 1, learning_rate=learning_rate))
-        #self.layers.append(LogisticLayer(10, 1, None, output_activation, True))
+        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, learning_rate=learning_rate))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -93,6 +94,8 @@ class MultilayerPerceptron(Classifier):
         for layer in self.layers:
             inp_next_layer = layer.forward(inp_next_layer)
 
+        return inp_next_layer
+
     def _compute_error(self, expected_outp):
         """
         Compute the total error of the network and propagate back through the net
@@ -106,8 +109,9 @@ class MultilayerPerceptron(Classifier):
         next_derivatives, next_weights = self.layers[-1].computeOutDerivative(expected_outp)
         for hidden_layer in reversed(self.layers[:-1]):
             next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights)
+        classified_outp = self.layers[-1].getOutput().argmax()
 
-        return expected_outp - self.layers[-1].getOutput()
+        return expected_outp - classified_outp
 
     def _update_weights(self):
         """
@@ -130,9 +134,12 @@ class MultilayerPerceptron(Classifier):
         if len(self.layers) == 0:
             logging.e("Trying to train MLP without any layer.")
         for epoch in range(0, self.epochs):
-            self._train_one_epoch()
+            self._train_one_epoch(verbose)
+            if verbose:
+                accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
+                logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
-    def _train_one_epoch(self):
+    def _train_one_epoch(self, verbose):
         """
         Train one epoch, seeing all input instances
         """
@@ -143,11 +150,7 @@ class MultilayerPerceptron(Classifier):
             self._update_weights()
 
     def classify(self, test_instance):
-        # Classify an instance given the model of the classifier
-        # You need to implement something here
-        outp = self._feed_forward(test_instance)
-        # TODO: Map onto expected result shape.
-        return self.layers[-1].getOutput() > 0.5
+        return self._feed_forward(test_instance).argmax()
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
