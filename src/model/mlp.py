@@ -109,9 +109,6 @@ class MultilayerPerceptron(Classifier):
         next_derivatives, next_weights = self.layers[-1].computeOutDerivative(expected_outp)
         for hidden_layer in reversed(self.layers[:-1]):
             next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights)
-        classified_outp = self.layers[-1].getOutput().argmax()
-
-        return expected_outp - classified_outp
 
     def _update_weights(self):
         """
@@ -134,17 +131,21 @@ class MultilayerPerceptron(Classifier):
         if len(self.layers) == 0:
             logging.e("Trying to train MLP without any layer.")
         for epoch in range(0, self.epochs):
-            self._train_one_epoch(verbose)
+            self._train_one_epoch()
             if verbose:
                 accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
-    def _train_one_epoch(self, verbose):
+    def _train_one_epoch(self):
         """
         Train one epoch, seeing all input instances
         """
 
-        for expected_outp, inp in zip(self.training_set.label, self.training_set.input):
+        for expected_label, inp in zip(self.training_set.label, self.training_set.input):
+            # Encode expected label into output shape.
+            expected_outp = np.zeros(10)
+            expected_outp[expected_label] = 1
+
             self._feed_forward(inp)
             self._compute_error(expected_outp)
             self._update_weights()

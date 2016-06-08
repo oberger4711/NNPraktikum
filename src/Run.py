@@ -18,7 +18,6 @@ def main():
     #one_digit_data = None
 
     all_digits_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000, one_hot=False)
-    print all_digits_data.training_set.label[0]
     print("")
     runMultilayerClassifier(all_digits_data)
 
@@ -63,7 +62,7 @@ def runLogisticClassifier(data):
                             data.test_set,
                             learningRate=0.005,
                             epochs=30)
-    trainAndEvaluateClassifier(c, data.test_set)
+    trainAndEvaluateClassifier(c, data.test_set, verbose=True)
 
 def runMultilayerClassifier(data):
     c = MultilayerPerceptron(data.training_set,

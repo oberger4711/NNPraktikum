@@ -56,7 +56,7 @@ class LogisticLayer():
 
         # You can have better initialization here
         if weights is None:
-            self.weights = np.random.rand(n_in + 1, n_out)/10
+            self.weights = np.random.rand(n_in + 1, n_out) / 10
         else:
             assert weights.shape == (n_in + 1, n_out)
             self.weights = weights
@@ -85,9 +85,9 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
-        self.inp = np.ndarray((self.n_in + 1, 1))
+        self.inp = np.ndarray(inp.shape[0] + 1)
         self.inp[0] = 1
-        self.inp[1:,0] = inp
+        self.inp[1:] = inp
         self.outp = self._fire(inp)
 
         return self.outp
@@ -135,10 +135,11 @@ class LogisticLayer():
         Update the weights of the layer
         """
 
-        self.weights += self.learning_rate * self.deltas * self.inp
+        for neuron in range(0, self.n_out):
+            self.weights[:, neuron] += self.learning_rate * self.deltas[neuron] * self.inp
 
     def _fire(self, inp):
-        return self.activation(np.dot(self.inp[:,0], self.weights))
+        return self.activation(np.dot(self.inp, self.weights))
 
     def getOutput(self):
         return self.outp
