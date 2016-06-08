@@ -45,7 +45,6 @@ class LogisticLayer():
         self.activation_string = activation
         self.activation = Activation.get_activation(self.activation_string)
         self.activation_derivative = Activation.get_derivative(self.activation_string)
-        assert self.activation_derivative != None
 
         self.n_in = n_in
         self.n_out = n_out
@@ -143,7 +142,7 @@ class LogisticLayer():
         self.weights += self.learning_rate * self.deltas * self.inp
 
     def _fire(self, inp):
-        return Activation.sigmoid(np.dot(self.inp[:,0], self.weights))
+        return self.activation(np.dot(self.inp[:,0], self.weights))
 
     def getOutput(self):
         return self.outp
