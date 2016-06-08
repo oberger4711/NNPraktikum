@@ -96,9 +96,9 @@ class LogisticLayer():
 
         Parameters
         ----------
-        nextDerivatives: ndarray
+        next_derivatives: ndarray
             a numpy array containing the derivatives from next layer
-        nextWeights : ndarray
+        next_weights : ndarray
             a numpy array containing the weights from next layer
 
         Change deltas
@@ -115,7 +115,7 @@ class LogisticLayer():
 
         Parameters
         ----------
-        expected: ndarray
+        expected_outp: ndarray
             a numpy array containing the expected result for the given input
 
         Change deltas
