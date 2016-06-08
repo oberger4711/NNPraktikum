@@ -107,10 +107,6 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        # Here the implementation of partial derivative calculation
-        # TODO: Delete if new solution works.
-        #self.deltas = self.outp * (1 - self.outp) * np.sum(next_derivatives * next_weights)
-        # More general solution:
         self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights)
 
     def computeOutDerivative(self, expected_outp):
@@ -128,9 +124,6 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        # TODO: Delete if new solution works.
-        #self.deltas = (expected_outp - self.outp) * self.outp * (1 - self.outp)
-        # More general solution:
         self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
 
     def updateWeights(self):
@@ -138,7 +131,6 @@ class LogisticLayer():
         Update the weights of the layer
         """
 
-        # Here the implementation of weight updating mechanism
         self.weights += self.learning_rate * self.deltas * self.inp
 
     def _fire(self, inp):
