@@ -5,18 +5,20 @@ from data.mnist_seven import MNISTSeven
 from model.stupid_recognizer import StupidRecognizer
 from model.perceptron import Perceptron
 from model.logistic_regression import LogisticRegression
+from model.mlp import MultilayerPerceptron
 from report.evaluator import Evaluator
 
 
 def main():
     one_digit_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
+    print("")
     #runStupidClassifier(one_digit_data)
     #runPerceptronClassifier(one_digit_data)
-    runLogisticClassifier(one_digit_data)
-    one_digit_data = None
+    #runLogisticClassifier(one_digit_data)
 
     #all_digits_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000, one_hot=False)
-    #runMultilayerClassifier(all_digits_data)
+    runMultilayerClassifier(one_digit_data)
+    one_digit_data = None
 
 def trainAndEvaluateClassifier(classifier, test_set, verbose=False, graph=False):
     # Train

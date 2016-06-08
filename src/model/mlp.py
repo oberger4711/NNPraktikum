@@ -1,10 +1,15 @@
 
+import sys
+import logging
 import numpy as np
 
 # from util.activation_functions import Activation
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+                    level=logging.DEBUG,
+                    stream=sys.stdout)
 
 class MultilayerPerceptron(Classifier):
     """
@@ -53,18 +58,12 @@ class MultilayerPerceptron(Classifier):
         self.layers = layers
         self.input_weights = input_weights
 
-        # add bias values ("1"s) at the beginning of all data sets
-        self.training_set.input = np.insert(self.training_set.input, 0, 1,
-                                            axis=1)
-        self.validation_set.input = np.insert(self.validation_set.input, 0, 1,
-                                              axis=1)
-        self.test_set.input = np.insert(self.test_set.input, 0, 1, axis=1)
-
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
         output_activation = "sigmoid"
-        self.layers.append(LogisticLayer(10, 1, None, output_activation, True))
+        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 1, learning_rate=learning_rate))
+        #self.layers.append(LogisticLayer(10, 1, None, output_activation, True))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -84,31 +83,43 @@ class MultilayerPerceptron(Classifier):
         inp : ndarray
             a numpy array containing the input of the layer
 
+        """
+
         # Here you have to propagate forward through the layers
-        # And remember the activation values of each layer
-        """
+        # and remember the activation values of each layer
 
-        pass
+        # Hidden layers
+        inp_next_layer = inp
+        for layer in self.layers:
+            inp_next_layer = layer.forward(inp_next_layer)
 
-    def _compute_error(self, target):
+    def _compute_error(self, expected_outp):
         """
-        Compute the total error of the network
+        Compute the total error of the network and propagate back through the net
 
         Returns
         -------
         ndarray :
-            a numpy array (1,nOut) containing the output of the layer
+            a numpy array (1, nOut) containing the output of the layer
         """
-        pass
+
+        next_derivatives, next_weights = self.layers[-1].computeOutDerivative(expected_outp)
+        for hidden_layer in reversed(self.layers[:-1]):
+            next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights)
+
+        return expected_outp - self.layers[-1].getOutput()
 
     def _update_weights(self):
         """
-        Update the weights of the layers by propagating back the error
+        Update the weights of the layers
         """
-        pass
+
+        for layer in self.layers:
+            layer.updateWeights()
 
     def train(self, verbose=False, graph=False):
-        """Train the Multi-layer Perceptrons
+        """
+        Train the Multi-layer Perceptrons
 
         Parameters
         ----------
@@ -116,19 +127,27 @@ class MultilayerPerceptron(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
 
-        pass
+        if len(self.layers) == 0:
+            logging.e("Trying to train MLP without any layer.")
+        for epoch in range(0, self.epochs):
+            self._train_one_epoch()
 
     def _train_one_epoch(self):
         """
         Train one epoch, seeing all input instances
         """
 
-        pass
+        for expected_outp, inp in zip(self.training_set.label, self.training_set.input):
+            self._feed_forward(inp)
+            self._compute_error(expected_outp)
+            self._update_weights()
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
         # You need to implement something here
-        return True
+        outp = self._feed_forward(test_instance)
+        # TODO: Map onto expected result shape.
+        return self.layers[-1].getOutput() > 0.5
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
@@ -148,10 +167,3 @@ class MultilayerPerceptron(Classifier):
         # Once you can classify an instance, just use map for all of the test
         # set.
         return list(map(self.classify, test))
-
-    def __del__(self):
-        # Remove the bias from input data
-        self.training_set.input = np.delete(self.training_set.input, 0, axis=1)
-        self.validation_set.input = np.delete(self.validation_set.input, 0,
-                                              axis=1)
-        self.test_set.input = np.delete(self.test_set.input, 0, axis=1)

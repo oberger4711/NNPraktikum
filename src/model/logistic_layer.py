@@ -90,6 +90,8 @@ class LogisticLayer():
         self.inp[1:,0] = inp
         self.outp = self._fire(inp)
 
+        return self.outp
+
     def computeDerivative(self, next_derivatives, next_weights):
         """
         Compute the derivatives (backward)
@@ -109,6 +111,8 @@ class LogisticLayer():
 
         self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights)
 
+        return self.deltas, self.weights
+
     def computeOutDerivative(self, expected_outp):
         """
         Compute the derivatives if this is an output layer
@@ -125,6 +129,8 @@ class LogisticLayer():
         """
 
         self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
+
+        return self.deltas, self.weights
 
     def updateWeights(self):
         """
