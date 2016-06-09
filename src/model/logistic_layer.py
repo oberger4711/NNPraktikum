@@ -11,6 +11,7 @@ class LogisticLayer():
     ----------
     n_in: int: number of units from the previous layer (or input data)
     n_out: int: number of units of the current layer (or output)
+    cost: string: cost function to be used
     activation: string: activation function of every units in the layer
     is_classifier_layer: bool:  to do classification or regression
 
@@ -38,13 +39,17 @@ class LogisticLayer():
         Learning rate to use in weight updates
     """
 
-    def __init__(self, n_in, n_out, weights=None,
+    def __init__(self, n_in, n_out, weights=None, cost="mse",
                  activation='sigmoid', is_classifier_layer=False, learning_rate=0.1):
 
         # Get activation function from string
         self.activation_string = activation
         self.activation = Activation.get_activation(self.activation_string)
         self.activation_derivative = Activation.get_derivative(self.activation_string)
+
+        self.cost = cost
+        # TODO: Make this more modular.
+        assert self.cost == "mse" or self.cost == "crossentropy"
 
         self.n_in = n_in
         self.n_out = n_out
@@ -128,7 +133,14 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        return self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
+        if self.cost == "crossentropy":
+            self.deltas = expected_outp - self.outp
+        elif self.cost == "mse":
+            self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
+        else:
+            logging.e("Unknown cost function '%s'.", self.cost)
+
+        return self.deltas, self.weights
 
     def updateWeights(self):
         """

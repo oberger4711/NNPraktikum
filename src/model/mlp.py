@@ -63,8 +63,7 @@ class MultilayerPerceptron(Classifier):
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
-        output_activation = "sigmoid"
-        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, learning_rate=learning_rate))
+        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
         #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 4, learning_rate=learning_rate))
         #self.layers.append(LogisticLayer(4, 10, learning_rate=learning_rate))
 
