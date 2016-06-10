@@ -114,9 +114,10 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights)
+        for neuron in range(0, self.n_out):
+            self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights[neuron, :])
 
-        return self.deltas, self.weights
+        return self.deltas, self.weights[1:, :]
 
     def computeOutDerivative(self, expected_outp):
         """
@@ -140,7 +141,7 @@ class LogisticLayer():
         else:
             logging.e("Unknown cost function '%s'.", self.cost)
 
-        return self.deltas, self.weights
+        return self.deltas, self.weights[1:, :]
 
     def updateWeights(self):
         """

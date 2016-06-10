@@ -63,9 +63,9 @@ class MultilayerPerceptron(Classifier):
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
-        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
-        #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 4, learning_rate=learning_rate))
-        #self.layers.append(LogisticLayer(4, 10, learning_rate=learning_rate))
+        #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 4, cost="mse", activation="sigmoid", learning_rate=learning_rate))
+        self.layers.append(LogisticLayer(4, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -129,8 +129,7 @@ class MultilayerPerceptron(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
 
-        if len(self.layers) == 0:
-            logging.e("Trying to train MLP without any layer.")
+        assert len(self.layers) > 0
         for epoch in range(0, self.epochs):
             self._train_one_epoch()
             if verbose:
