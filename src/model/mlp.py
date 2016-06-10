@@ -2,6 +2,7 @@
 import sys
 import logging
 import numpy as np
+import cPickle as pickle
 
 from sklearn.metrics import accuracy_score
 
@@ -20,7 +21,7 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, input_weights=None,
                  output_task='classification', output_activation='softmax',
-                 cost='crossentropy', learning_rate=0.01, epochs=50):
+                 cost='crossentropy', learning_rate=0.01, epochs=50, load_from=None, save_as=None):
 
         """
         A digit-7 recognizer based on logistic regression algorithm
@@ -60,12 +61,24 @@ class MultilayerPerceptron(Classifier):
         self.layers = layers
         self.input_weights = input_weights
 
+        self.save_as = save_as
+        self.load_from = load_from
+
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
-        #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
-        self.layers.append(LogisticLayer(self.training_set.input.shape[1], 4, cost="mse", activation="sigmoid", learning_rate=learning_rate))
-        self.layers.append(LogisticLayer(4, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+        if load_from == None:
+            #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+            self.layers.append(LogisticLayer(self.training_set.input.shape[1], 30, cost="mse", activation="sigmoid", learning_rate=learning_rate))
+            self.layers.append(LogisticLayer(30, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+        else:
+            logging.info("Loading layers from file %s.", load_from)
+            loading_file = open(load_from, "rb")
+            self.layers = pickle.load(loading_file)
+            loading_file.close()
+            for layer in self.layers:
+                # Workaround for python not being able to serialize functions.
+                layer.LoadFunctions()
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -135,6 +148,16 @@ class MultilayerPerceptron(Classifier):
             if verbose:
                 accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
+        if self.save_as != None:
+            # Workaround for python not being able to serialize functions.
+            for layer in self.layers:
+                layer.UnloadFunctions()
+            logging.info("Saving to file %s.", self.save_as)
+            saving_file = open(self.save_as, "wb")
+            pickle.dump(self.layers, saving_file, protocol=pickle.HIGHEST_PROTOCOL)
+            saving_file.close()
+            for layer in self.layers:
+                layer.LoadFunctions()
 
     def _train_one_epoch(self):
         """

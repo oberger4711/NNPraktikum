@@ -69,7 +69,9 @@ def runMultilayerClassifier(data):
                             data.validation_set,
                             data.test_set,
                             learning_rate=0.005,
-                            epochs=30)
+                            epochs=50,
+                            load_from="first_mlp.p",
+                            save_as="first_mlp.p")
     trainAndEvaluateClassifier(c, data.test_set, verbose=True)
 
 if __name__ == '__main__':
