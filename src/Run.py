@@ -8,6 +8,9 @@ from model.logistic_regression import LogisticRegression
 from model.mlp import MultilayerPerceptron
 from report.evaluator import Evaluator
 
+import subprocess as sp
+import cPickle as pickle
+
 
 def main():
     #one_digit_data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
@@ -69,10 +72,20 @@ def runMultilayerClassifier(data):
                             data.validation_set,
                             data.test_set,
                             learning_rate=0.005,
-                            epochs=50,
-                            load_from="first_mlp.p",
-                            save_as="first_mlp.p")
+                            epochs=30,
+                            #load_from="first_mlp.p",
+                            #save_as="first_mlp.p"
+                            )
     trainAndEvaluateClassifier(c, data.test_set, verbose=True)
+    while (True):
+            classifyDrawing(c)
+
+def classifyDrawing(classifier):
+    print("Opening drawing window...")
+    draw_process = sp.Popen("./Draw.py", stdout=sp.PIPE)
+    out = draw_process.communicate()[0]
+    inpt = pickle.loads(out).flatten()
+    print("Classified as %i " % (classifier.classify(inpt)))
 
 if __name__ == '__main__':
     main()

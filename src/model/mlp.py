@@ -68,9 +68,9 @@ class MultilayerPerceptron(Classifier):
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
         if load_from == None:
-            #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
-            self.layers.append(LogisticLayer(self.training_set.input.shape[1], 30, cost="mse", activation="sigmoid", learning_rate=learning_rate))
-            self.layers.append(LogisticLayer(30, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+            self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+            #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 30, cost="mse", activation="sigmoid", learning_rate=learning_rate))
+            #self.layers.append(LogisticLayer(30, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
         else:
             logging.info("Loading layers from file %s.", load_from)
             loading_file = open(load_from, "rb")
