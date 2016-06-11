@@ -24,20 +24,38 @@ options like other shapes or colors...
 """
 
 from Tkinter import *
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import cPickle as pickle
 
 """paint.py: not exactly a paint program.. just a smooth line drawing demo."""
 
+IMAGE_DIMENSIONS = (28, 28)
+CANVAS_SCALE = 10
+
 b1 = "up"
-xold, yold = None, None
+x_old, y_old = None, None
+drawing_area = None
+image = None
 
 def main():
+    global IMAGE_DIMENSIONS, CANVAS_SCALE, drawing_area, image
     root = Tk()
-    drawing_area = Canvas(root)
+    drawing_area = Canvas(root, width=IMAGE_DIMENSIONS[0] * CANVAS_SCALE, height=IMAGE_DIMENSIONS[1] * CANVAS_SCALE, bg="white")
     drawing_area.pack()
     drawing_area.bind("<Motion>", motion)
     drawing_area.bind("<ButtonPress-1>", b1down)
     drawing_area.bind("<ButtonRelease-1>", b1up)
+    clear()
     root.mainloop()
+    pickle_image = pickle.dumps(image)
+    print(pickle_image)
+
+def clear():
+    global drawing_area, image
+    drawing_area.delete("all")
+    image = np.zeros(IMAGE_DIMENSIONS)
 
 def b1down(event):
     global b1
@@ -45,18 +63,20 @@ def b1down(event):
                           # because "Motion" events happen -all the time-
 
 def b1up(event):
-    global b1, xold, yold
+    global b1, x_old, y_old
     b1 = "up"
     xold = None           # reset the line when you let go of the button
     yold = None
 
 def motion(event):
+    global CANVAS_SCALE
     if b1 == "down":
-        global xold, yold
-        if xold is not None and yold is not None:
-            event.widget.create_line(xold, yold, event.x, event.y, smooth=TRUE, width=5)
-        xold = event.x
-        yold = event.y
+        global x_old, y_old
+        if x_old is not None and y_old is not None:
+            event.widget.create_rectangle(event.x - (CANVAS_SCALE / 2), event.y - (CANVAS_SCALE / 2), event.x + (CANVAS_SCALE / 2), event.y + (CANVAS_SCALE / 2), fill="black")
+            image[event.x / CANVAS_SCALE, event.y / CANVAS_SCALE] = 1
+        x_old = event.x
+        y_old = event.y
 
 if __name__ == "__main__":
     main()
