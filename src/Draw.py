@@ -32,7 +32,7 @@ import cPickle as pickle
 """paint.py: not exactly a paint program.. just a smooth line drawing demo."""
 
 IMAGE_DIMENSIONS = (28, 28)
-CANVAS_SCALE = 1
+CANVAS_SCALE = 10
 
 b1 = "up"
 x_old, y_old = None, None
