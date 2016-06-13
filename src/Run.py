@@ -69,7 +69,7 @@ def runMultilayerClassifier(data):
                             data.validation_set,
                             data.test_set,
                             learning_rate=0.01,
-                            epochs=10,
+                            epochs=20,
                             n_neurons_per_layer=[784, 10])
     trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
 
