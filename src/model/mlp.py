@@ -5,6 +5,7 @@ import numpy as np
 import cPickle as pickle
 import matplotlib.pyplot as plt
 
+from util.loss_functions import *
 from sklearn.metrics import accuracy_score
 
 # from util.activation_functions import Activation
@@ -21,8 +22,8 @@ class MultilayerPerceptron(Classifier):
     """
 
     def __init__(self, train, valid, test, n_neurons_per_layer=None, input_weights=None,
-                 output_task='classification', output_activation='softmax',
-                 cost='crossentropy', learning_rate=0.01, epochs=50, load_from=None, save_as=None):
+                 error=BinaryCrossEntropyError(), output_task='classification', output_activation='softmax',
+                 learning_rate=0.01, epochs=50, load_from=None, save_as=None):
 
         """
         A digit-7 recognizer based on logistic regression algorithm
@@ -49,7 +50,6 @@ class MultilayerPerceptron(Classifier):
         self.epochs = epochs
         self.output_task = output_task  # Either classification or regression
         self.output_activation = output_activation
-        self.cost = cost
 
         self.training_set = train
         self.validation_set = valid
@@ -58,6 +58,8 @@ class MultilayerPerceptron(Classifier):
         self.n_neurons_per_layer = n_neurons_per_layer
 
         self.input_weights = input_weights
+
+        self.error = error
 
         self.save_as = save_as
         self.load_from = load_from
@@ -129,6 +131,8 @@ class MultilayerPerceptron(Classifier):
         next_derivatives, next_weights = self.layers[-1].computeOutDerivative(expected_outp)
         for hidden_layer in reversed(self.layers[:-1]):
             next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights)
+
+        return self.error.calculate_error(expected_outp, self.layers[-1].getOutput())
 
     def _update_weights(self):
         """

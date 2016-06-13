@@ -77,6 +77,9 @@ class SumSquaredError(Error):
 
 
 class BinaryCrossEntropyError(Error):
+
+    def __init__(self):
+        self.ceError = CrossEntropyError()
     """
     The Loss calculated by the Cross Entropy between binary target and
     probabilistic output (BCE)
@@ -85,8 +88,7 @@ class BinaryCrossEntropyError(Error):
         self.error_string = 'bce'
 
     def calculate_error(self, target, output):
-        # Here you have to implement the Binary Cross Entropy
-        pass
+        return -1 / output.shape[0] * self.ceError.calculate_error(target, output)
 
 
 class CrossEntropyError(Error):
@@ -99,4 +101,4 @@ class CrossEntropyError(Error):
 
     def calculate_error(self, target, output):
         # Here you have to implement the Cross Entropy Error
-        pass
+        return -np.sum(target * np.log(output) + (1 - target) * np.log(1 - output))
