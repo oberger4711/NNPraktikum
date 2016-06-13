@@ -68,11 +68,11 @@ def runMultilayerClassifier(data):
     c = MultilayerPerceptron(data.training_set,
                             data.validation_set,
                             data.test_set,
-                            learning_rate=0.005,
-                            epochs=50,
-                            load_from="first_mlp.p",
-                            save_as="first_mlp.p")
-    trainAndEvaluateClassifier(c, data.test_set, verbose=True)
+                            learning_rate=0.01,
+                            epochs=10,
+                            load_from="../mlps/784_50_10_mlp.p"
+                            )
+    trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
 
 if __name__ == '__main__':
     main()
