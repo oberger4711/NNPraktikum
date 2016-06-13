@@ -83,9 +83,11 @@ class MultilayerPerceptron(Classifier):
             loading_file = open(load_from, "rb")
             self.layers = pickle.load(loading_file)
             loading_file.close()
+            self.n_neurons_per_layer = [self.training_set.input.shape[1]]
             for layer in self.layers:
                 # Workaround for python not being able to serialize functions.
                 layer.LoadFunctions()
+                self.n_neurons_per_layer.append(len(layer.getOutput()))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
