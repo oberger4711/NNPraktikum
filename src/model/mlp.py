@@ -3,6 +3,7 @@ import sys
 import logging
 import numpy as np
 import cPickle as pickle
+import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score
 
@@ -69,8 +70,14 @@ class MultilayerPerceptron(Classifier):
         self.layers = []
         if load_from == None:
             #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
-            self.layers.append(LogisticLayer(self.training_set.input.shape[1], 30, cost="mse", activation="sigmoid", learning_rate=learning_rate))
-            self.layers.append(LogisticLayer(30, 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+            # TODO: Make this a ctor parameter
+            self.n_neurons_per_layer = [self.training_set.input.shape[1], 50, 10]
+
+            for (n_neurons_previous_layer, n_neurons_current_layer) in zip(self.n_neurons_per_layer[:-2], self.n_neurons_per_layer[1:-1]):
+                print("Creating layer with %i inputs and %i outputs." % (n_neurons_previous_layer, n_neurons_current_layer))
+                self.layers.append(LogisticLayer(n_neurons_previous_layer, n_neurons_current_layer, cost="mse", activation="sigmoid", learning_rate=learning_rate))
+            print("Creating layer with %i inputs and %i outputs." % (self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1]))
+            self.layers.append(LogisticLayer(self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1], cost="crossentropy", activation="softmax", learning_rate=learning_rate))
         else:
             logging.info("Loading layers from file %s.", load_from)
             loading_file = open(load_from, "rb")
@@ -143,11 +150,17 @@ class MultilayerPerceptron(Classifier):
         """
 
         assert len(self.layers) > 0
+        accuracy_history = []
         for epoch in range(0, self.epochs):
             self._train_one_epoch()
-            if verbose:
+
+            accuracy = None
+            if verbose or graph:
                 accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
+                accuracy_history.append(accuracy * 100)
+            if verbose:
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
+
         if self.save_as != None:
             # Workaround for python not being able to serialize functions.
             for layer in self.layers:
@@ -158,6 +171,12 @@ class MultilayerPerceptron(Classifier):
             saving_file.close()
             for layer in self.layers:
                 layer.LoadFunctions()
+        if graph:
+            plt.plot(range(1, len(accuracy_history) + 1), accuracy_history)
+            plt.xlabel("epoch")
+            plt.ylabel("accuracy")
+            plt.title("Accuracy of MLP with Layers %s" % str(self.n_neurons_per_layer))
+            plt.show()
 
     def _train_one_epoch(self):
         """
