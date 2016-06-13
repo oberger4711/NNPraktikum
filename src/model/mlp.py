@@ -20,7 +20,7 @@ class MultilayerPerceptron(Classifier):
     A multilayer perceptron used for classification
     """
 
-    def __init__(self, train, valid, test, layers=None, input_weights=None,
+    def __init__(self, train, valid, test, n_neurons_per_layer=None, input_weights=None,
                  output_task='classification', output_activation='softmax',
                  cost='crossentropy', learning_rate=0.01, epochs=50, load_from=None, save_as=None):
 
@@ -55,11 +55,8 @@ class MultilayerPerceptron(Classifier):
         self.validation_set = valid
         self.test_set = test
 
-        # Record the performance of each epoch for later usages
-        # e.g. plotting, reporting..
-        self.performances = []
+        self.n_neurons_per_layer = n_neurons_per_layer
 
-        self.layers = layers
         self.input_weights = input_weights
 
         self.save_as = save_as
@@ -69,14 +66,14 @@ class MultilayerPerceptron(Classifier):
         # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
         if load_from == None:
-            #self.layers.append(LogisticLayer(self.training_set.input.shape[1], 10, cost="crossentropy", activation="softmax", learning_rate=learning_rate))
-            # TODO: Make this a ctor parameter
-            self.n_neurons_per_layer = [self.training_set.input.shape[1], 50, 10]
+            if self.n_neurons_per_layer == None:
+                self.n_neurons_per_layer = [self.training_set.input.shape[1], 10]
+            assert self.n_neurons_per_layer > 1
 
             for (n_neurons_previous_layer, n_neurons_current_layer) in zip(self.n_neurons_per_layer[:-2], self.n_neurons_per_layer[1:-1]):
-                print("Creating layer with %i inputs and %i outputs." % (n_neurons_previous_layer, n_neurons_current_layer))
+                print("Appending layer with %i inputs and %i outputs." % (n_neurons_previous_layer, n_neurons_current_layer))
                 self.layers.append(LogisticLayer(n_neurons_previous_layer, n_neurons_current_layer, cost="mse", activation="sigmoid", learning_rate=learning_rate))
-            print("Creating layer with %i inputs and %i outputs." % (self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1]))
+            print("Appending layer with %i inputs and %i outputs." % (self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1]))
             self.layers.append(LogisticLayer(self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1], cost="crossentropy", activation="softmax", learning_rate=learning_rate))
         else:
             print("Loading layers from file %s." % (load_from))
