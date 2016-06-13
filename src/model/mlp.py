@@ -79,7 +79,7 @@ class MultilayerPerceptron(Classifier):
             print("Creating layer with %i inputs and %i outputs." % (self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1]))
             self.layers.append(LogisticLayer(self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1], cost="crossentropy", activation="softmax", learning_rate=learning_rate))
         else:
-            logging.info("Loading layers from file %s.", load_from)
+            print("Loading layers from file %s." % (load_from))
             loading_file = open(load_from, "rb")
             self.layers = pickle.load(loading_file)
             loading_file.close()
@@ -167,7 +167,7 @@ class MultilayerPerceptron(Classifier):
             # Workaround for python not being able to serialize functions.
             for layer in self.layers:
                 layer.UnloadFunctions()
-            logging.info("Saving to file %s.", self.save_as)
+            print("Saving to file %s." % (self.save_as))
             saving_file = open(self.save_as, "wb")
             pickle.dump(self.layers, saving_file, protocol=pickle.HIGHEST_PROTOCOL)
             saving_file.close()
