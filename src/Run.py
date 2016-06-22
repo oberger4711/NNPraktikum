@@ -68,9 +68,9 @@ def runMultilayerClassifier(data):
     c = MultilayerPerceptron(data.training_set,
                             data.validation_set,
                             data.test_set,
-                            learning_rate=0.01,
+                            learning_rate=0.05,
                             epochs=20,
-                            n_neurons_per_layer=[784, 10])
+                            n_neurons_per_layer=[784, 100, 10])
     trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
 
 if __name__ == '__main__':
