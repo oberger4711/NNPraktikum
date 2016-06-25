@@ -54,7 +54,7 @@ class LogisticLayer():
         self.n_in = n_in
         self.n_out = n_out
 
-        self.inp = np.ndarray((n_in + 1))
+        self.inp = np.ndarray((n_in + 1, 1))
         self.inp[0] = 1
         self.outp = np.ndarray((n_out, 1))
         self.deltas = np.zeros((n_out, 1))
@@ -65,7 +65,6 @@ class LogisticLayer():
         else:
             assert weights.shape == (n_in + 1, n_out)
             self.weights = weights
-        self.threshold = np.random.rand() / 10
 
         self.learning_rate = learning_rate
 
@@ -100,9 +99,10 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
-        self.inp = np.ndarray(inp.shape[0] + 1)
+        self.inp = np.ndarray((inp.shape[0] + 1, 1))
+        print inp
         self.inp[0] = 1
-        self.inp[1:] = inp
+        self.inp[1:, 0] = inp
         self.outp = self._fire(inp)
 
         return self.outp
@@ -124,8 +124,7 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        for neuron in range(0, self.n_out):
-            self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights[neuron, :])
+        self.deltas = self.activation_derivative(self.outp) * np.dot(next_derivatives, next_weights)
 
         return self.deltas, self.weights[1:, :]
 
@@ -162,7 +161,7 @@ class LogisticLayer():
             self.weights[:, neuron] += self.learning_rate * self.deltas[neuron] * self.inp
 
     def _fire(self, inp):
-        return self.activation(np.dot(self.inp, self.weights))
+        return self.activation(np.dot(np.array(self.inp), self.weights))
 
     def getOutput(self):
         return self.outp
