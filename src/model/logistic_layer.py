@@ -99,10 +99,9 @@ class LogisticLayer():
             a numpy array (1,n_out) containing the output of the layer
         """
 
-        self.inp = np.ndarray((inp.shape[0] + 1, 1))
-        print inp
+        self.inp = np.ndarray((inp.shape[0] + 1))
         self.inp[0] = 1
-        self.inp[1:, 0] = inp
+        self.inp[1:] = inp
         self.outp = self._fire(inp)
 
         return self.outp
