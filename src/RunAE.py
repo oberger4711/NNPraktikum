@@ -4,7 +4,7 @@
 from data.mnist_seven import MNISTSeven
 
 from model.denoising_ae import DenoisingAutoEncoder
-from model.mlp import MultilayerPerceptron 
+from model.mlp import MultilayerPerceptron
 
 from report.evaluator import Evaluator
 from report.performance_plot import PerformancePlot
@@ -25,16 +25,13 @@ def main():
     # So you should comment them out, let alone the MLP training and evaluation
 
     # Train the classifiers #
-    print("=========================")
-    print("Training the autoencoder..")
-
     myDAE = DenoisingAutoEncoder(data.training_set,
                                  data.validation_set,
                                  data.test_set,
                                  learning_rate=0.05,
                                  epochs=30)
 
-    print("\nAutoencoder  has been training..")
+    print("Train autoencoder..")
     myDAE.train()
     print("Done..")
 
@@ -47,20 +44,25 @@ def main():
     # Correct the code here
     myMLPClassifier = MultilayerPerceptron(data.training_set,
                                            data.validation_set,
-                                            data.test_set,
-                                            learning_rate=0.05,
+                                           data.test_set,
+                                           learning_rate=0.05,
                                            epochs=30)
 
-    print("\nMulti-layer Perceptron has been training..")
+    print("Train MLP..")
     myMLPClassifier.train()
     print("Done..")
-    # Do the recognizer
-    # Explicitly specify the test set to be evaluated
-    mlpPred = myMLPClassifier.evaluate()
+    print("")
 
-    # Report the result #
-    print("=========================")
+    # Evaluate
+    print("Evaluate..")
+    mlpPred = myMLPClassifier.evaluate()
+    print("Done..")
+    print("")
+
+    print("Results:")
     evaluator = Evaluator()
+
+    print("")
 
     # print("Result of the stupid recognizer:")
     # evaluator.printComparison(data.testSet, stupidPred)
@@ -74,7 +76,6 @@ def main():
     # evaluator.printComparison(data.testSet, perceptronPred)
     # evaluator.printAccuracy(data.test_set, lrPred)
 
-    print("\nResult of the DAE + MLP recognizer (on test set):")
     # evaluator.printComparison(data.testSet, perceptronPred)
     evaluator.printAccuracy(data.test_set, mlpPred)
 

@@ -35,8 +35,8 @@ def trainAndEvaluateClassifier(classifier, test_set, verbose=False, graph=False)
     print("")
 
     # Results
-    evaluator = Evaluator()
     print("Result:")
+    evaluator = Evaluator()
     # evaluator.printComparison(data.test_set, stupidPred)
     evaluator.printAccuracy(test_set, pred)
     print("")
