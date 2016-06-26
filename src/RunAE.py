@@ -32,8 +32,9 @@ def main():
                                  epochs=30)
 
     print("Train autoencoder..")
-    myDAE.train()
+    myDAE.train(verbose=True)
     print("Done..")
+    return
 
     # Multi-layer Perceptron
     # NOTES:
@@ -45,7 +46,6 @@ def main():
     myMLPClassifier = MultilayerPerceptron(data.training_set,
                                            data.validation_set,
                                            data.test_set,
-                                           learning_rate=0.05,
                                            epochs=30)
 
     print("Train MLP..")

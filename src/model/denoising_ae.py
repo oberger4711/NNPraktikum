@@ -2,6 +2,9 @@
 import sys
 import logging
 import numpy as np
+from sklearn.metrics import accuracy_score
+
+from util.loss_functions import *
 from model.logistic_layer import LogisticLayer
 from model.auto_encoder import AutoEncoder
 
@@ -15,7 +18,7 @@ class DenoisingAutoEncoder(AutoEncoder):
     A denoising autoencoder.
     """
 
-    def __init__(self, train, valid, test, learning_rate=0.1, epochs=30):
+    def __init__(self, training_set, validation_set, test_set, n_hidden_neurons=100, noise_range=0.0001, learning_rate=0.05, error=DifferentError(), epochs=30):
         """
          Parameters
         ----------
@@ -34,25 +37,60 @@ class DenoisingAutoEncoder(AutoEncoder):
         epochs : positive int
         performances: array of floats
         """
+        self.noise_range = noise_range
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.error = error
 
-        self.training_set = train
-        self.validation_set = valid
-        self.test_set = test
+        self.training_set = training_set
+        self.validation_set = validation_set
+        self.test_set = test_set
+
+        self.layers = []
+        n_input_neurons = training_set.input.shape[1]
+        self.layers.append(LogisticLayer(n_input_neurons, n_hidden_neurons, cost="mse", activation="sigmoid", learning_rate=self.learning_rate))
+        self.layers.append(LogisticLayer(n_hidden_neurons, n_input_neurons, cost="mse", activation="sigmoid", learning_rate=self.learning_rate))
 
     def train(self, verbose=True):
         """
         Train the denoising autoencoder
         """
-        pass
+        for epoch in range(0, self.epochs):
+            self._train_one_epoch()
+
+            if verbose:
+                error = self.evaluate(self.validation_set)
+                logging.info("New denoising error after epoch %i: %.4f", epoch + 1, error)
+
 
     def _train_one_epoch(self):
         """
         Train one epoch, seeing all input instances
         """
 
-        pass
+        for inp in self.training_set.input:
+            inp_with_noise = self._add_noise(inp)
+
+            self._feed_forward(inp_with_noise)
+            self._compute_error(inp)
+            self._update_weights()
+
+    def _feed_forward(self, inp):
+        inp_next_layer = inp
+        for layer in self.layers:
+            inp_next_layer = layer.forward(inp_next_layer)
+
+        return inp_next_layer
+
+    def _compute_error(self, target):
+        next_derivatives, next_weights = self.layers[-1].computeOutDerivative(target)
+        for hidden_layer in reversed(self.layers[:-1]):
+            next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights.T)
+	    next_weights = np.delete(next_weights, 0, 0)
+
+    def _update_weights(self):
+        for layer in self.layers:
+            layer.updateWeights()
 
     def _get_weights(self):
         """
@@ -60,3 +98,25 @@ class DenoisingAutoEncoder(AutoEncoder):
         """
 
         pass
+
+    def evaluate(self, test=None):
+        if test is None:
+            test = self.test_set.input
+
+        error = 0
+        for test_instance in test:
+            test_instance_with_noise = self._add_noise(test_instance)
+            outp = self.reconstruct(test_instance_with_noise)
+            #error += self.error.calculate_error(test_instance, outp)
+            error += abs(np.sum(test_instance - outp))
+
+        return error
+
+    def reconstruct(self, test_instance):
+        return self._feed_forward(test_instance)
+
+    def _add_noise(self, instance):
+        noise = np.abs(np.random.normal(0, self.noise_range, instance.shape[0]))
+
+        return instance + noise
+
