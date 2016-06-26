@@ -60,7 +60,7 @@ class MultilayerPerceptron(Classifier):
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
         if (layers == None):
-            self.layers = MultilayerPerceptron.createLayers([self.training_set.input[0].shape[0], 10], 0.05)
+            self.layers = MultilayerPerceptron.createLayers([self.training_set.input.shape[1], 10], 0.05)
         else:
             self.layers = layers
         assert len(self.layers) > 0
