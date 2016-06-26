@@ -18,7 +18,7 @@ class DenoisingAutoEncoder(AutoEncoder):
     A denoising autoencoder.
     """
 
-    def __init__(self, training_set, validation_set, test_set, n_hidden_neurons=100, noise_range=0.0001, learning_rate=0.05, error=DifferentError(), epochs=30):
+    def __init__(self, training_set, validation_set, test_set, n_hidden_neurons=100, noise_ratio=0.3, learning_rate=0.05, error=DifferentError(), epochs=30):
         """
          Parameters
         ----------
@@ -37,7 +37,7 @@ class DenoisingAutoEncoder(AutoEncoder):
         epochs : positive int
         performances: array of floats
         """
-        self.noise_range = noise_range
+        self.noise_ratio = noise_ratio
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.error = error
@@ -116,7 +116,11 @@ class DenoisingAutoEncoder(AutoEncoder):
         return self._feed_forward(test_instance)
 
     def _add_noise(self, instance):
-        noise = np.abs(np.random.normal(0, self.noise_range, instance.shape[0]))
+        total_size = instance.shape[0]
+        zeros_size = int(total_size * self.noise_ratio)
+        noise = np.ones(total_size - zeros_size)
+        noise = np.insert(noise, 0, np.zeros(zeros_size))
+        np.random.shuffle(noise)
 
-        return instance + noise
+        return instance * noise
 
