@@ -4,10 +4,9 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 
-from util.loss_functions import *
 from sklearn.metrics import accuracy_score
 
-# from util.activation_functions import Activation
+from util.loss_functions import *
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
