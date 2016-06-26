@@ -2,7 +2,6 @@
 import sys
 import logging
 import numpy as np
-import cPickle as pickle
 import matplotlib.pyplot as plt
 
 from util.loss_functions import *
@@ -23,7 +22,7 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, input_weights=None,
                  error=BinaryCrossEntropyError(), output_task='classification', output_activation='softmax',
-                 epochs=50, load_from=None, save_as=None):
+                 epochs=50):
 
         """
         A digit-7 recognizer based on logistic regression algorithm
@@ -57,9 +56,6 @@ class MultilayerPerceptron(Classifier):
         self.input_weights = input_weights
 
         self.error = error
-
-        self.save_as = save_as
-        self.load_from = load_from
 
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
@@ -151,16 +147,6 @@ class MultilayerPerceptron(Classifier):
             if verbose:
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
-        if self.save_as != None:
-            # Workaround for python not being able to serialize functions.
-            for layer in self.layers:
-                layer.UnloadFunctions()
-            print("Saving to file %s." % (self.save_as))
-            saving_file = open(self.save_as, "wb")
-            pickle.dump(self.layers, saving_file, protocol=pickle.HIGHEST_PROTOCOL)
-            saving_file.close()
-            for layer in self.layers:
-                layer.LoadFunctions()
         if graph:
             plt.plot(range(1, len(accuracy_history) + 1), accuracy_history)
             plt.xlabel("epoch")
