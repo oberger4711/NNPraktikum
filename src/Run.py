@@ -68,7 +68,7 @@ def runMultilayerClassifier(data):
     c = MultilayerPerceptron(data.training_set,
                             data.validation_set,
                             data.test_set,
-                            epochs=5,
+                            epochs=30,
                             layers=MultilayerPerceptron.createLayers([784, 100, 10], 0.05))
     trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
 
