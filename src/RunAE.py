@@ -32,11 +32,10 @@ def main():
                                  data.test_set,
                                  n_hidden_neurons=n_encoder_neurons,
                                  learning_rate=0.05,
-                                 epochs=1)
+                                 epochs=10)
 
     print("Train autoencoder..")
     myDAE.train(verbose=True)
-    print myDAE.get_weights().shape
     print("Done..")
 
     # Multi-layer Perceptron
