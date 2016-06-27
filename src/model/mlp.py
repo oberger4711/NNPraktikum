@@ -112,7 +112,6 @@ class MultilayerPerceptron(Classifier):
         next_derivatives, next_weights = self.layers[-1].computeOutDerivative(expected_outp)
         for hidden_layer in reversed(self.layers[:-1]):
             next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights.T)
-	    next_weights = np.delete(next_weights, 0, 0)
 
         return self.error.calculate_error(expected_outp, self.layers[-1].getOutput())
 

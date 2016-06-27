@@ -86,18 +86,16 @@ class DenoisingAutoEncoder(AutoEncoder):
         next_derivatives, next_weights = self.layers[-1].computeOutDerivative(target)
         for hidden_layer in reversed(self.layers[:-1]):
             next_derivatives, next_weights = hidden_layer.computeDerivative(next_derivatives, next_weights.T)
-	    next_weights = np.delete(next_weights, 0, 0)
 
     def _update_weights(self):
         for layer in self.layers:
             layer.updateWeights()
 
-    def _get_weights(self):
+    def get_weights(self):
         """
         Get the weights (after training)
         """
-
-        pass
+        return self.layers[0].weights
 
     def evaluate(self, test=None):
         if test is None:
@@ -118,9 +116,9 @@ class DenoisingAutoEncoder(AutoEncoder):
     def _add_noise(self, instance):
         total_size = instance.shape[0]
         zeros_size = int(total_size * self.noise_ratio)
-        noise = np.ones(total_size - zeros_size)
-        noise = np.insert(noise, 0, np.zeros(zeros_size))
-        np.random.shuffle(noise)
+        mask = np.ones(total_size - zeros_size)
+        mask = np.insert(mask, 0, np.zeros(zeros_size))
+        np.random.shuffle(mask)
 
-        return instance * noise
+        return instance * mask
 
