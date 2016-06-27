@@ -61,7 +61,7 @@ def main():
                                            epochs=10)
 
     print("Train MLP..")
-    myMLPClassifier.train()
+    myMLPClassifier.train(verbose=True)
     print("Done..")
     print("")
 
