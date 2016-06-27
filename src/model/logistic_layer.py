@@ -74,16 +74,6 @@ class LogisticLayer():
         self.size = self.n_out
         self.shape = self.weights.shape
 
-    def UnloadFunctions(self):
-        # Workaround for pickle not being able to persist functions.
-        self.activation = None
-        self.activation_derivative = None
-
-    def LoadFunctions(self):
-        # Workaround for pickle not being able to persist functions.
-        self.activation = Activation.get_activation(self.activation_string)
-        self.activation_derivative = Activation.get_derivative(self.activation_string)
-
     def forward(self, inp):
         """
         Compute forward step over the input using its weights
