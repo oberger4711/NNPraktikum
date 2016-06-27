@@ -5,6 +5,7 @@ from data.mnist_seven import MNISTSeven
 
 from model.denoising_ae import DenoisingAutoEncoder
 from model.mlp import MultilayerPerceptron
+from model.logistic_layer import LogisticLayer
 
 from report.evaluator import Evaluator
 from report.performance_plot import PerformancePlot
@@ -25,16 +26,18 @@ def main():
     # So you should comment them out, let alone the MLP training and evaluation
 
     # Train the classifiers #
+    n_encoder_neurons = 50
     myDAE = DenoisingAutoEncoder(data.training_set,
                                  data.validation_set,
                                  data.test_set,
+                                 n_hidden_neurons=n_encoder_neurons,
                                  learning_rate=0.05,
-                                 epochs=30)
+                                 epochs=1)
 
     print("Train autoencoder..")
     myDAE.train(verbose=True)
+    print myDAE.get_weights().shape
     print("Done..")
-    return
 
     # Multi-layer Perceptron
     # NOTES:
@@ -43,10 +46,20 @@ def main():
     # And do the classification
 
     # Correct the code here
+    layers = []
+    # Add auto envoder hidden layer.
+    layers.append(LogisticLayer(data.training_set.input.shape[1], n_encoder_neurons, weights=myDAE.get_weights(), cost="mse", activation="sigmoid", learning_rate=0.05))
+    # Add another hidden layer just like in the previous exercise.
+    n_second_hidden_neurons = 100
+    layers.append(LogisticLayer(n_encoder_neurons, n_second_hidden_neurons, cost="mse", activation="sigmoid", learning_rate=0.05))
+    # Add output classifier layer with one neuron per digit.
+    n_out_neurons = 10
+    layers.append(LogisticLayer(n_second_hidden_neurons, n_out_neurons, cost="crossentropy", activation="softmax", learning_rate=0.05))
     myMLPClassifier = MultilayerPerceptron(data.training_set,
                                            data.validation_set,
                                            data.test_set,
-                                           epochs=30)
+                                           layers=layers,
+                                           epochs=10)
 
     print("Train MLP..")
     myMLPClassifier.train()
