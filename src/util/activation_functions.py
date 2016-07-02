@@ -23,7 +23,6 @@ class Activation:
     @staticmethod
     def sigmoid_prime(outp):
         # Here you have to code the derivative of sigmoid function
-        # netOutput.*(1-netOutput)
         return outp*(1.0-outp)
 
     @staticmethod
@@ -35,17 +34,18 @@ class Activation:
 
     @staticmethod
     def tanh_prime(outp):
-        # Here you have to code the derivative of tanh function
-        pass
+        ex = np.exp(1.0*outp)
+        exn = np.exp(-1.0*outp)
+        return 1 - np.divide((ex - exn) ** 2, (ex + exn) ** 2)
 
     @staticmethod
     def identity(outp):
-        return lambda x: x
+        return outp
 
     @staticmethod
     def identity_prime(outp):
         # Here you have to code the derivative of identity function
-        pass
+        return np.ones(outp.shape)
 
     @staticmethod
     def softmax(outp):
@@ -65,7 +65,9 @@ class Activation:
         Returns the activation function corresponding to the given string
         """
 
-        if function_name == 'sigmoid':
+        if function_name == "identity":
+            return Activation.identity
+        elif function_name == 'sigmoid':
             return Activation.sigmoid
         elif function_name == 'softmax':
             return Activation.softmax
@@ -83,7 +85,9 @@ class Activation:
         specify the activation function
         """
 
-        if function_name == 'sigmoid':
+        if function_name == "identity":
+            return Activation.identity_prime
+        elif function_name == 'sigmoid':
             return Activation.sigmoid_prime
         elif function_name == 'tanh':
             return Activation.tanh_prime

@@ -2,13 +2,11 @@
 import sys
 import logging
 import numpy as np
-import cPickle as pickle
 import matplotlib.pyplot as plt
 
-from util.loss_functions import *
 from sklearn.metrics import accuracy_score
 
-# from util.activation_functions import Activation
+from util.loss_functions import *
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
@@ -21,9 +19,9 @@ class MultilayerPerceptron(Classifier):
     A multilayer perceptron used for classification
     """
 
-    def __init__(self, train, valid, test, n_neurons_per_layer=None, input_weights=None,
+    def __init__(self, train, valid, test, layers=None, input_weights=None,
                  error=BinaryCrossEntropyError(), output_task='classification', output_activation='softmax',
-                 learning_rate=0.01, epochs=50, load_from=None, save_as=None):
+                 epochs=50):
 
         """
         A digit-7 recognizer based on logistic regression algorithm
@@ -46,7 +44,6 @@ class MultilayerPerceptron(Classifier):
         performances: array of floats
         """
 
-        self.learning_rate = learning_rate
         self.epochs = epochs
         self.output_task = output_task  # Either classification or regression
         self.output_activation = output_activation
@@ -55,38 +52,22 @@ class MultilayerPerceptron(Classifier):
         self.validation_set = valid
         self.test_set = test
 
-        self.n_neurons_per_layer = n_neurons_per_layer
-
         self.input_weights = input_weights
 
         self.error = error
 
-        self.save_as = save_as
-        self.load_from = load_from
-
         # Build up the network from specific layers
         # Here is an example of a MLP acting like the Logistic Regression
-        self.layers = []
-        if load_from == None:
-            if self.n_neurons_per_layer == None:
-                self.n_neurons_per_layer = [self.training_set.input.shape[1], 10]
-            assert self.n_neurons_per_layer > 1
-
-            for (n_neurons_previous_layer, n_neurons_current_layer) in zip(self.n_neurons_per_layer[:-2], self.n_neurons_per_layer[1:-1]):
-                print("Appending layer with %i inputs and %i outputs." % (n_neurons_previous_layer, n_neurons_current_layer))
-                self.layers.append(LogisticLayer(n_neurons_previous_layer, n_neurons_current_layer, cost="mse", activation="sigmoid", learning_rate=learning_rate))
-            print("Appending layer with %i inputs and %i outputs." % (self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1]))
-            self.layers.append(LogisticLayer(self.n_neurons_per_layer[-2], self.n_neurons_per_layer[-1], cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+        if (layers == None):
+            self.layers = MultilayerPerceptron.createLayers([self.training_set.input.shape[1], 10], 0.05)
         else:
-            print("Loading layers from file %s." % (load_from))
-            loading_file = open(load_from, "rb")
-            self.layers = pickle.load(loading_file)
-            loading_file.close()
-            self.n_neurons_per_layer = [self.training_set.input.shape[1]]
-            for layer in self.layers:
-                # Workaround for python not being able to serialize functions.
-                layer.LoadFunctions()
-                self.n_neurons_per_layer.append(len(layer.getOutput()))
+            self.layers = layers
+        assert len(self.layers) > 0
+        self.n_neurons_per_layer = []
+        for layer in self.layers:
+            self.n_neurons_per_layer.append(layer.n_in)
+        self.n_neurons_per_layer.append(self.layers[-1].n_out)
+        print("Creating MLP with layers {}...".format(self.n_neurons_per_layer))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -164,16 +145,6 @@ class MultilayerPerceptron(Classifier):
             if verbose:
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
 
-        if self.save_as != None:
-            # Workaround for python not being able to serialize functions.
-            for layer in self.layers:
-                layer.UnloadFunctions()
-            print("Saving to file %s." % (self.save_as))
-            saving_file = open(self.save_as, "wb")
-            pickle.dump(self.layers, saving_file, protocol=pickle.HIGHEST_PROTOCOL)
-            saving_file.close()
-            for layer in self.layers:
-                layer.LoadFunctions()
         if graph:
             plt.plot(range(1, len(accuracy_history) + 1), accuracy_history)
             plt.xlabel("epoch")
@@ -216,3 +187,14 @@ class MultilayerPerceptron(Classifier):
         # Once you can classify an instance, just use map for all of the test
         # set.
         return list(map(self.classify, test))
+
+    @staticmethod
+    def createLayers(n_neurons_per_layer, learning_rate):
+        assert len(n_neurons_per_layer) > 0
+        layers = []
+
+        for (n_neurons_previous_layer, n_neurons_current_layer) in zip(n_neurons_per_layer[:-2], n_neurons_per_layer[1:-1]):
+            layers.append(LogisticLayer(n_neurons_previous_layer, n_neurons_current_layer, cost="mse", activation="sigmoid", learning_rate=learning_rate))
+        layers.append(LogisticLayer(n_neurons_per_layer[-2], n_neurons_per_layer[-1], cost="crossentropy", activation="softmax", learning_rate=learning_rate))
+
+        return layers

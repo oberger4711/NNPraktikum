@@ -35,8 +35,8 @@ def trainAndEvaluateClassifier(classifier, test_set, verbose=False, graph=False)
     print("")
 
     # Results
-    evaluator = Evaluator()
     print("Result:")
+    evaluator = Evaluator()
     # evaluator.printComparison(data.test_set, stupidPred)
     evaluator.printAccuracy(test_set, pred)
     print("")
@@ -68,9 +68,8 @@ def runMultilayerClassifier(data):
     c = MultilayerPerceptron(data.training_set,
                             data.validation_set,
                             data.test_set,
-                            learning_rate=0.05,
-                            epochs=20,
-                            n_neurons_per_layer=[784, 100, 10])
+                            epochs=30,
+                            layers=MultilayerPerceptron.createLayers([784, 100, 10], 0.05))
     trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
 
 if __name__ == '__main__':

@@ -1,7 +1,12 @@
 import numpy as np
+import sys
+import logging
 
 from util.activation_functions import Activation
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+                    level=logging.DEBUG,
+                    stream=sys.stdout)
 
 class LogisticLayer():
     """
@@ -74,16 +79,6 @@ class LogisticLayer():
         self.size = self.n_out
         self.shape = self.weights.shape
 
-    def UnloadFunctions(self):
-        # Workaround for pickle not being able to persist functions.
-        self.activation = None
-        self.activation_derivative = None
-
-    def LoadFunctions(self):
-        # Workaround for pickle not being able to persist functions.
-        self.activation = Activation.get_activation(self.activation_string)
-        self.activation_derivative = Activation.get_derivative(self.activation_string)
-
     def forward(self, inp):
         """
         Compute forward step over the input using its weights
@@ -142,12 +137,12 @@ class LogisticLayer():
             a numpy array containing the partial derivatives on this layer
         """
 
-        if self.cost == "crossentropy":
+        if self.cost == "crossentropy" and (self.activation_string == "softmax" or self.activation_string == "sigmoid"):
             self.deltas = expected_outp - self.outp
-        elif self.cost == "mse":
-            self.computeDerivative(expected_outp - self.outp, np.ones(self.n_out))
+        elif self.cost == "mse" and self.activation_string == "sigmoid":
+            self.deltas = (expected_outp - self.outp) * self.activation_derivative(self.outp)
         else:
-            logging.e("Unknown cost function '%s'.", self.cost)
+            logging.e("Combination activation function %s and cost function '%s' not implemented.", self.activation_string, self.cost)
 
         return self.deltas, self.weights[1:, :]
 
