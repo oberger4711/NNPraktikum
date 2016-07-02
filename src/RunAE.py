@@ -26,13 +26,14 @@ def main():
     # So you should comment them out, let alone the MLP training and evaluation
 
     # Train the classifiers #
-    n_encoder_neurons = 50
+    n_encoder_neurons = 100
     myDAE = DenoisingAutoEncoder(data.training_set,
                                  data.validation_set,
                                  data.test_set,
                                  n_hidden_neurons=n_encoder_neurons,
+                                 noise_ratio=0.2,
                                  learning_rate=0.05,
-                                 epochs=10)
+                                 epochs=6)
 
     print("Train autoencoder..")
     myDAE.train(verbose=True)
@@ -58,7 +59,7 @@ def main():
                                            data.validation_set,
                                            data.test_set,
                                            layers=layers,
-                                           epochs=10)
+                                           epochs=15)
 
     print("Train MLP..")
     myMLPClassifier.train(verbose=True)
