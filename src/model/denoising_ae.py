@@ -51,6 +51,12 @@ class DenoisingAutoEncoder(AutoEncoder):
         self.layers.append(LogisticLayer(n_input_neurons, n_hidden_neurons, cost="crossentropy", activation="sigmoid", learning_rate=self.learning_rate))
         self.layers.append(LogisticLayer(n_hidden_neurons, n_input_neurons, cost="crossentropy", activation="sigmoid", learning_rate=self.learning_rate))
 
+        self.n_neurons_per_layer = []
+        for layer in self.layers:
+            self.n_neurons_per_layer.append(layer.n_in)
+        self.n_neurons_per_layer.append(self.layers[-1].n_out)
+        print("Creating Denoising Auto Encoder with layers {}...".format(self.n_neurons_per_layer))
+
     def train(self, verbose=True):
         """
         Train the denoising autoencoder
