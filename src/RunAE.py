@@ -12,20 +12,11 @@ from report.performance_plot import PerformancePlot
 
 
 def main():
-    # data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000,
-    #                  one_hot=True, target_digit='7')
-
-    # NOTE:
-    # Comment out the MNISTSeven instantiation above and
-    # uncomment the following to work with full MNIST task
     data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000,
                       one_hot=False)
 
-    # NOTE:
-    # Other 1-digit classifiers do not make sense now for comparison purpose
-    # So you should comment them out, let alone the MLP training and evaluation
-
-    # Train the classifiers #
+    # Train
+    # Denoising Auto Encoder
     n_encoder_neurons = 100
     myDAE = DenoisingAutoEncoder(data.training_set,
                                  data.validation_set,
@@ -33,19 +24,13 @@ def main():
                                  n_hidden_neurons=n_encoder_neurons,
                                  noise_ratio=0.2,
                                  learning_rate=0.05,
-                                 epochs=6)
+                                 epochs=5)
 
     print("Train autoencoder..")
     myDAE.train(verbose=True)
     print("Done..")
 
-    # Multi-layer Perceptron
-    # NOTES:
-    # Now take the trained weights (layer) from the Autoencoder
-    # Feed it to be a hidden layer of the MLP, continue training (fine-tuning)
-    # And do the classification
-
-    # Correct the code here
+    # Multilayer Perceptron
     layers = []
     # Add auto envoder hidden layer.
     layers.append(LogisticLayer(data.training_set.input.shape[1], n_encoder_neurons, weights=myDAE.get_weights(), cost="mse", activation="sigmoid", learning_rate=0.05))

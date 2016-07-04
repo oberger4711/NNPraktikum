@@ -47,6 +47,7 @@ class MultilayerPerceptron(Classifier):
         self.epochs = epochs
         self.output_task = output_task  # Either classification or regression
         self.output_activation = output_activation
+        self.performances = []
 
         self.training_set = train
         self.validation_set = valid
@@ -134,23 +135,13 @@ class MultilayerPerceptron(Classifier):
         """
 
         assert len(self.layers) > 0
-        accuracy_history = []
         for epoch in range(0, self.epochs):
             self._train_one_epoch()
 
-            accuracy = None
-            if verbose or graph:
-                accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
-                accuracy_history.append(accuracy * 100)
+            accuracy = accuracy_score(self.validation_set.label, self.evaluate(self.validation_set))
+            self.performances.append(accuracy)
             if verbose:
                 logging.info("New validation accuracy after epoch %i: %.1f%%", epoch + 1, accuracy * 100)
-
-        if graph:
-            plt.plot(range(1, len(accuracy_history) + 1), accuracy_history)
-            plt.xlabel("epoch")
-            plt.ylabel("accuracy")
-            plt.title("Accuracy of MLP with Layers %s" % str(self.n_neurons_per_layer))
-            plt.show()
 
     def _train_one_epoch(self):
         """

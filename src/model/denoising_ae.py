@@ -40,6 +40,7 @@ class DenoisingAutoEncoder(AutoEncoder):
         self.noise_ratio = noise_ratio
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.performances = []
         self.error = error
 
         self.training_set = training_set
@@ -64,8 +65,9 @@ class DenoisingAutoEncoder(AutoEncoder):
         for epoch in range(0, self.epochs):
             self._train_one_epoch()
 
+            error = self.evaluate(self.validation_set)
+            self.performances.append(error)
             if verbose:
-                error = self.evaluate(self.validation_set)
                 logging.info("New denoising error after epoch %i: %.4f", epoch + 1, error)
 
 

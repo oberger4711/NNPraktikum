@@ -70,7 +70,7 @@ def runMultilayerClassifier(data):
                             data.test_set,
                             epochs=30,
                             layers=MultilayerPerceptron.createLayers([784, 100, 10], 0.05))
-    trainAndEvaluateClassifier(c, data.test_set, verbose=True, graph=True)
+    trainAndEvaluateClassifier(c, data.test_set, verbose=True)
 
 if __name__ == '__main__':
     main()
